@@ -14,6 +14,7 @@ exports.serveAssets = function(res, asset, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
+  console.log('asset: ', asset);
   fs.readFile(asset, 'utf8', function (err, data) {
     if (err) {
       res.statusCode = 404;
@@ -35,7 +36,6 @@ exports.addSite = function(res, url) {
       console.log(err);
       return;
     }
-    var contents = fs.readFileSync(archive.paths.list, 'utf8');
     res.statusCode = 302;
     res.end();
   });

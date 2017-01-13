@@ -4,6 +4,7 @@ var archive = require('../helpers/archive-helpers');
 var helpers = require('./http-helpers');
 var serveAssets = helpers.serveAssets;
 var addSite = helpers.addSite;
+var fetchHtml = require('../workers/htmlfetcher').fetchHtml;
 
 
 exports.handleRequest = function (req, res) {
@@ -27,8 +28,29 @@ exports.handleRequest = function (req, res) {
     req.on('data', function(chunk) {
       url += chunk;
     }).on('end', function() {
-      url = url.split('=')[1].trim();
-      addSite(res, url);
+      // url = url.split('=')[1].trim();
+      url = url.split('=')[1];
+      console.log('got url: ', url);
+      archive.isUrlInList(url, function(err, exists) {
+        if (exists) {
+          serveAssets(res, archive.paths.archivedSites + '/' + url + '.html', serveAssetCallback);
+        } else {
+          console.log('url not found in sites.txt');
+          //check to see if worker is already fetching site
+
+          //start worker to fetch url html -- callback will write to sites.txt
+          fetchHtml(url);
+
+          //send loading.html back
+          serveAssets(res, archive.paths.siteAssets + '/loading.html', serveAssetCallback);
+
+
+
+        }
+      });
+      //call isUrlList yes ? serveAssets : addSite
+
+      // addSite(res, url);
     });
   }
   

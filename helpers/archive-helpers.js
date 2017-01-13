@@ -12,7 +12,8 @@ var _ = require('underscore');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
+  fetcher: path.join(__dirname, '../web/workers/htmlfetcher.js')
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -68,11 +69,12 @@ exports.isUrlArchived = function(url, cb) {
 
 exports.downloadUrls = function(urls) {
   for (var i = 0; i < urls.length; i ++) {
-    fs.writeFile(exports.paths.archivedSites + '/' + urls[i], '', (err) => {
+    fs.writeFile(exports.paths.archivedSites + '/' + urls[i] + '.html', '', (err) => {
       if (err) {
         throw err;
         return;
-      } 
+      }
+      //todo call html fetcher 
       console.log('It\'s saved!');
     });
   }
